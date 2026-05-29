@@ -1,5 +1,5 @@
 import unittest
-from nlp_module import NLPModule
+from main import NLPModule
 
 class TestNLPModule(unittest.TestCase):
     def setUp(self):

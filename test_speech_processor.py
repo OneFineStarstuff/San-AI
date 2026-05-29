@@ -1,7 +1,7 @@
 import unittest
 from io import BytesIO
 from fastapi import UploadFile
-from speech_processor import SpeechProcessor
+from main import SpeechProcessor
 
 class TestSpeechProcessor(unittest.TestCase):
     def setUp(self):
