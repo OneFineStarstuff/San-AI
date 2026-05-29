@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eaip:TechnicalSpecification
+    xmlns:eaip="urn:eaip:spec:v1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="urn:eaip:spec:v1 EAIP_Technical_Specification.xsd"
+    version="1.0.0">
+
+    <eaip:Metadata>
+        <eaip:Title>Enterprise AI Agent Interoperability Protocol (EAIP) Technical Specification</eaip:Title>
+        <eaip:ProtocolName>EAIP</eaip:ProtocolName>
+        <eaip:Version>1.0.0</eaip:Version>
+        <eaip:Status>DRAFT</eaip:Status>
+        <eaip:LastUpdated>2026-05-29</eaip:LastUpdated>
+    </eaip:Metadata>
+
+    <eaip:Section id="standardization">
+        <eaip:Title>Necessity of Standardization</eaip:Title>
+        <eaip:Content>
+            The rapid proliferation of autonomous AI agents within enterprise environments has led to a fragmented ecosystem. Without a standardized protocol, inter-agent collaboration is hindered by incompatible communication patterns, inconsistent identity management, and opaque state handling. EAIP addresses these challenges by providing a common framework for discovery, authentication, and task delegation, ensuring seamless interoperability across diverse agentic systems.
+        </eaip:Content>
+    </eaip:Section>
+
+    <eaip:Section id="architecture">
+        <eaip:Title>API Architecture</eaip:Title>
+        <eaip:Content>
+            EAIP mandates the use of gRPC over HTTP/2 as the primary transport mechanism. This choice is driven by the need for high-performance, bidirectional streaming, and strong contract enforcement via Protocol Buffers. gRPC enables efficient task handoff and real-time feedback loops between agents. While REST and WebSockets were considered, gRPC's support for strictly typed interfaces and multiplexed streams makes it the optimal choice for complex agent-to-agent interactions.
+        </eaip:Content>
+        <eaip:Subsection id="grpc_config">
+            <eaip:Title>gRPC Configuration</eaip:Title>
+            <eaip:Content>
+                Agents MUST implement services using proto3 definitions. All service methods SHOULD support deadline propagation to ensure system-wide responsiveness.
+            </eaip:Content>
+        </eaip:Subsection>
+    </eaip:Section>
+
+    <eaip:Section id="iam">
+        <eaip:Title>IAM for Autonomous Agents</eaip:Title>
+        <eaip:Content>
+            Security in EAIP is built on the SPIFFE (Secure Production Identity Framework for Everyone) standard. Each agent is assigned a SPIFFE ID, which is used to issue short-lived, cryptographically verifiable SVIDs (SPIFFE Verifiable Identity Documents). SPIRE is recommended as the control plane for attesting agent workloads and managing the SVID lifecycle. Mutual TLS (mTLS) using X.509 SVIDs is the required method for securing agent-to-agent communication.
+        </eaip:Content>
+    </eaip:Section>
+
+    <eaip:Section id="state_management">
+        <eaip:Title>State &amp; Error Management</eaip:Title>
+        <eaip:Content>
+            EAIP introduces the Recursive Context Envelope (RCE) for managing distributed agent state. The RCE is a nested data structure that accompanies every request, capturing the lineage of the task, current execution context, and accumulated error metadata. This allows agents to maintain a shared understanding of multi-step processes without relying on a centralized database for transient state. Errors are propagated up the RCE chain, enabling sophisticated recovery and backtracking strategies.
+        </eaip:Content>
+    </eaip:Section>
+
+    <eaip:ReferenceArchitecture>
+        <eaip:Description>
+            The following sequence diagram illustrates the standard EAIP flow for SVID acquisition, agent lookup, and task execution with RCE state management.
+        </eaip:Description>
+        <eaip:Diagram format="mermaid"><![CDATA[
+sequenceDiagram
+    participant Caller as Caller Agent
+    participant SPIRE as SPIRE Server
+    participant Registry as Agent Registry
+    participant Target as Target Agent
+    participant RCE_Store as RCE Store
+
+    Caller->>SPIRE: Request SVID
+    SPIRE-->>Caller: X.509 SVID
+    Caller->>Registry: Lookup Target (capabilities)
+    Registry-->>Caller: Target Endpoint
+    Caller->>RCE_Store: Init Envelope (RCE depth-0 root)
+    Caller->>Target: HandoffRequest (gRPC/HTTP/2, SVID, RCE root)
+    Target->>RCE_Store: Read Context
+    Target->>Caller: TaskStream (gRPC bidi, HTTP/2)
+    Target->>RCE_Store: Update Context (append child RCE)
+    Target->>Caller: TaskComplete
+        ]]></eaip:Diagram>
+    </eaip:ReferenceArchitecture>
+
+</eaip:TechnicalSpecification>

@@ -1,3 +1,6 @@
+"""
+Setup configuration for the agi_pipeline package.
+"""
 from setuptools import setup, find_packages
 
 setup(
