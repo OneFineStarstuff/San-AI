@@ -1,6 +1,6 @@
 import unittest
 from PIL import Image
-from cv_module import CVModule
+from main import CVModule
 
 class TestCVModule(unittest.TestCase):
     def setUp(self):
