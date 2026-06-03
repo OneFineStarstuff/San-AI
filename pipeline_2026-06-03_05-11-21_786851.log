@@ -1,0 +1,14 @@
+2026-06-03 05:11:21.797 | INFO     | main:<module>:39 - Application startup
+2026-06-03 05:11:22.875 | INFO     | main:__init__:97 - NLP model loaded successfully.
+2026-06-03 05:11:22.950 | INFO     | main:__init__:119 - CV model loaded successfully.
+2026-06-03 05:11:24.498 | INFO     | main:__init__:139 - Speech processor initialized successfully.
+2026-06-03 05:11:24.557 | INFO     | main:__init__:119 - CV model loaded successfully.
+2026-06-03 05:11:24.559 | DEBUG    | main:detect_objects:125 - Detecting objects in the image.
+2026-06-03 05:11:24.563 | INFO     | main:__init__:119 - CV model loaded successfully.
+2026-06-03 05:11:24.566 | INFO     | main:__init__:97 - NLP model loaded successfully.
+2026-06-03 05:11:24.567 | DEBUG    | main:generate_text:103 - Generating text for prompt: Hello
+2026-06-03 05:11:24.568 | INFO     | main:generate_text:108 - Generated response: Generated text
+2026-06-03 05:11:24.572 | INFO     | main:__init__:97 - NLP model loaded successfully.
+2026-06-03 05:11:24.576 | INFO     | main:__init__:139 - Speech processor initialized successfully.
+2026-06-03 05:11:24.581 | INFO     | main:__init__:139 - Speech processor initialized successfully.
+2026-06-03 05:11:24.585 | INFO     | main:__init__:139 - Speech processor initialized successfully.

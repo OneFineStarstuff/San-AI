@@ -1,0 +1,9 @@
+2026-06-03 04:50:55.689 | INFO     | main:<module>:38 - Application startup
+2026-06-03 04:50:57.004 | INFO     | main:__init__:96 - NLP model loaded successfully.
+2026-06-03 04:50:57.078 | INFO     | main:__init__:118 - CV model loaded successfully.
+2026-06-03 04:51:02.001 | INFO     | main:<module>:38 - Application startup
+2026-06-03 04:51:03.165 | INFO     | main:__init__:96 - NLP model loaded successfully.
+2026-06-03 04:51:03.228 | INFO     | main:__init__:118 - CV model loaded successfully.
+2026-06-03 04:51:04.846 | INFO     | main:<module>:38 - Application startup
+2026-06-03 04:51:05.642 | INFO     | main:__init__:96 - NLP model loaded successfully.
+2026-06-03 04:51:05.705 | INFO     | main:__init__:118 - CV model loaded successfully.

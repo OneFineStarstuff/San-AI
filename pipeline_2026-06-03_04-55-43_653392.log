@@ -1,0 +1,14 @@
+2026-06-03 04:55:43.664 | INFO     | main:<module>:38 - Application startup
+2026-06-03 04:55:44.634 | INFO     | main:__init__:96 - NLP model loaded successfully.
+2026-06-03 04:55:44.712 | INFO     | main:__init__:118 - CV model loaded successfully.
+2026-06-03 04:55:46.431 | INFO     | main:__init__:136 - Speech processor initialized successfully.
+2026-06-03 04:55:46.799 | INFO     | main:__init__:118 - CV model loaded successfully.
+2026-06-03 04:55:46.800 | DEBUG    | main:detect_objects:122 - Detecting objects in the image.
+2026-06-03 04:55:47.197 | INFO     | main:__init__:118 - CV model loaded successfully.
+2026-06-03 04:55:47.198 | DEBUG    | main:detect_objects:122 - Detecting objects in the image.
+2026-06-03 04:55:48.448 | INFO     | main:__init__:96 - NLP model loaded successfully.
+2026-06-03 04:55:48.448 | DEBUG    | main:generate_text:102 - Generating text for prompt: Hello
+2026-06-03 04:55:51.849 | INFO     | main:generate_text:107 - Generated response: Hello, Hello. Hello, Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello
+2026-06-03 04:55:54.521 | INFO     | main:__init__:136 - Speech processor initialized successfully.
+2026-06-03 04:55:57.273 | INFO     | main:__init__:136 - Speech processor initialized successfully.
+2026-06-03 04:55:58.842 | INFO     | main:__init__:136 - Speech processor initialized successfully.
