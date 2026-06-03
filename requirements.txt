@@ -3,7 +3,7 @@ uvicorn
 torch
 transformers
 Pillow
-whisper
+openai-whisper
 ultralytics
 pyttsx3
 loguru
