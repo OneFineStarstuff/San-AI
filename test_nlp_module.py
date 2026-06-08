@@ -1,5 +1,5 @@
 import unittest
-from main import NLPModule
+from main import NLPModule, ZKFairnessProof, ContextualAttributionEnvelope
 
 class TestNLPModule(unittest.TestCase):
     def setUp(self):
