@@ -2,14 +2,16 @@ import unittest
 from io import BytesIO
 from fastapi import UploadFile
 from main import SpeechProcessor
+import os
 
 class TestSpeechProcessor(unittest.TestCase):
     def setUp(self):
         self.speech_processor = SpeechProcessor()
 
     def test_speech_to_text(self):
-        # Create a dummy audio file for testing
-        audio_content = BytesIO(b'Test audio content')
+        # Use a real (valid) dummy wav file
+        with open("test.wav", "rb") as f:
+            audio_content = BytesIO(f.read())
         audio_file = UploadFile(filename="test.wav", file=audio_content)
         result = self.speech_processor.speech_to_text(audio_file)
         self.assertIsNotNone(result)
