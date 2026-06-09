@@ -1,0 +1,4 @@
+[bandit]
+targets: main.py
+exclude: test_main_endpoints.py,test_main_pipeline.py
+skips: B101

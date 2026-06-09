@@ -1,19 +1,11 @@
-from setuptools import setup, find_packages
+"""
+Setup configuration for the San-AI package.
+"""
+
+from setuptools import find_packages, setup
 
 setup(
-    name="agi_pipeline",
-    version="1.0.1",
+    name="san-ai",
+    version="0.1.0",
     packages=find_packages(),
-    install_requires=[
-        "fastapi",
-        "uvicorn",
-        "torch",
-        "transformers",
-        "Pillow",
-        "whisper",
-        "ultralytics",
-        "pyttsx3",
-        "loguru",
-        "nest_asyncio"
-    ],
 )

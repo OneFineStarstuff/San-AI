@@ -8,3 +8,10 @@ ultralytics
 pyttsx3
 loguru
 nest_asyncio
+PyJWT
+python-multipart
+pytest
+lxml
+sentencepiece
+httpx
+pytest-asyncio
