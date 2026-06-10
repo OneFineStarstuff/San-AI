@@ -11,19 +11,19 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      uses: docker/setup-buildx-action@d70bba9afb1f3d223464506c9a35e4d271960249 # v3.3.0
 
     - name: Log in to Docker Hub
-      uses: docker/login-action@v1
+      uses: docker/login-action@e92390c5fb4213d489c027c2d966f973327663e2 # v3.1.0
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Build and push
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@2cdde5c3d9a1811654877cc3c7d6c63b715694c3 # v5.3.0
       with:
         push: true
         tags: your-dockerhub-username/agi-pipeline:latest
