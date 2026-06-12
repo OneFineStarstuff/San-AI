@@ -11,4 +11,7 @@ nest_asyncio
 PyJWT
 python-multipart
 pytest
+pytest-asyncio
 lxml
+httpx
+sentencepiece

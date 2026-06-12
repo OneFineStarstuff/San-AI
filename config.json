@@ -8,7 +8,7 @@
         "diagnose": true
     },
     "security": {
-        "secret_key": "YvZz9Hni0hWJPh_UWW4dQYf9rhIe9nNYcC5ZQTTZz0Q",
+        "secret_key": "dummy-secret-key-for-local-dev-only",
         "algorithm": "HS256"
     },
     "nlp_model": {

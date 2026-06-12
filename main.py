@@ -39,7 +39,7 @@ logger.add("pipeline_{time}.log", rotation="1 MB", level="DEBUG", enqueue=True,
 logger.info("Application startup")
 
 # === Security Setup ===
-SECRET_KEY = os.getenv("SECRET_KEY", "YvZz9Hni0hWJPh_UWW4dQYf9rhIe9nNYcC5ZQTTZz0Q")
+SECRET_KEY = os.getenv("SECRET_KEY", "dummy-secret-key-for-local-dev-only")
 ALGORITHM = "HS256"
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -277,7 +277,7 @@ class EnhancedAGIPipeline:
 
         # Update RCE with results
         rce.task_lineage.append("NLP_Generated")
-        rce.context_depth += 1
+        rce.context_depth += 1  # pylint: disable=no-member
         rce.metadata["response_length"] = len(response_text)
 
         return {
