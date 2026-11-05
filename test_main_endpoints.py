@@ -1,8 +1,13 @@
-import pytest
-from fastapi.testclient import TestClient
-from main import app, create_access_token
+from datetime import datetime, timedelta, timezone
 import io
+
+import jwt
+import pytest
+from fastapi import HTTPException
+from fastapi.testclient import TestClient
 from PIL import Image
+
+from main import ALGORITHM, SECRET_KEY, app, authenticate_user, create_access_token
 
 client = TestClient(app)
 
@@ -54,3 +59,28 @@ def test_stt_endpoint(auth_header):
     data = response.json()
     assert "response" in data
     assert "cae_metadata" in data
+
+def test_nlp_endpoint_rejects_missing_bearer_token():
+    response = client.post("/process-nlp/", json={"text": "test"})
+    assert response.status_code == 401
+
+
+def test_access_token_contains_subject_and_expiry():
+    token = create_access_token({"sub": "testuser"})
+    claims = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    assert claims["sub"] == "testuser"
+    assert claims["exp"] > int(datetime.now(timezone.utc).timestamp())
+
+
+def test_expired_access_token_is_rejected():
+    token = jwt.encode(
+        {
+            "sub": "testuser",
+            "exp": datetime.now(timezone.utc) - timedelta(seconds=1),
+        },
+        SECRET_KEY,
+        algorithm=ALGORITHM,
+    )
+    with pytest.raises(HTTPException) as exc_info:
+        authenticate_user(token)
+    assert exc_info.value.status_code == 401

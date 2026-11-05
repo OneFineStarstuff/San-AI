@@ -40,7 +40,9 @@ The AGI Pipeline is an enterprise-grade multimodal AGI system integrating Natura
 3. **Environment Variables**:
    Set a secure secret key for JWT:
    ```bash
-   export SECRET_KEY="your-very-secure-secret-key"
+   export SECRET_KEY="$(python -c 'import secrets; print(secrets.token_hex(32))')"
+   export JWT_TTL_MINUTES="30"
+   export CORS_ORIGINS="http://localhost:3000,http://127.0.0.1:3000"
    ```
 
 ## Usage
@@ -72,7 +74,7 @@ The AGI Pipeline is an enterprise-grade multimodal AGI system integrating Natura
 - `POST /speech-to-text/`: Transcribe uploaded audio files.
 - `POST /text-to-speech/`: Synthesize text into speech.
 
-*Note: All endpoints require a valid JWT bearer token.*
+*Note: All endpoints require a valid JWT bearer token. The application refuses to start without a configured signing key of at least 32 UTF-8 bytes. Tokens expire after `JWT_TTL_MINUTES` (default 30; maximum 1440). Set `CORS_ORIGINS` to a comma-separated list of exact allowed origins; wildcard origins are rejected.*
 
 ## Citation
 
