@@ -13,8 +13,7 @@ import signal
 import sys
 import tempfile
 import uuid
-from datetime import datetime
-from datetime import timezone
+from datetime import datetime, timedelta, timezone
 from functools import lru_cache
 from typing import List, Optional
 
@@ -35,12 +34,35 @@ from ultralytics import YOLO
 # === Configuration and Logging Setup ===
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 logger.add("pipeline_{time}.log", rotation="1 MB", level="DEBUG", enqueue=True,
-           backtrace=True, diagnose=True)
+           backtrace=False, diagnose=False)
 logger.info("Application startup")
 
 # === Security Setup ===
-SECRET_KEY = os.getenv("SECRET_KEY", "dummy-secret-key-for-local-dev-only")
+SECRET_KEY = os.getenv("SECRET_KEY", "")
 ALGORITHM = "HS256"
+JWT_TTL_MINUTES = int(os.getenv("JWT_TTL_MINUTES", "30"))
+if len(SECRET_KEY.encode("utf-8")) < 32:
+    raise RuntimeError(
+        "SECRET_KEY must be configured with at least 32 UTF-8 bytes; "
+        "the application will not use a built-in signing key."
+    )
+if not 1 <= JWT_TTL_MINUTES <= 1440:
+    raise RuntimeError("JWT_TTL_MINUTES must be between 1 and 1440.")
+
+CORS_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv(
+        "CORS_ORIGINS",
+        "http://localhost:3000,http://127.0.0.1:3000"
+    ).split(",")
+    if origin.strip()
+]
+if not CORS_ORIGINS or "*" in CORS_ORIGINS:
+    raise RuntimeError(
+        "CORS_ORIGINS must contain one or more explicit origins; "
+        "wildcard origins are not allowed."
+    )
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
@@ -49,6 +71,11 @@ def create_access_token(data: dict):
     Creates a JWT access token.
     """
     to_encode = data.copy()
+    if not to_encode.get("sub"):
+        raise ValueError("JWT subject (sub) is required.")
+    issued_at = datetime.now(timezone.utc)
+    to_encode["iat"] = issued_at
+    to_encode["exp"] = issued_at + timedelta(minutes=JWT_TTL_MINUTES)
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
@@ -58,7 +85,12 @@ def authenticate_user(token: str = Depends(oauth2_scheme)):
     Authenticates a user via JWT token.
     """
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(
+            token,
+            SECRET_KEY,
+            algorithms=[ALGORITHM],
+            options={"require": ["exp", "sub"]},
+        )
     except jwt.PyJWTError as exc:
         logger.warning("Authentication failed.")
         raise HTTPException(status_code=401, detail="Invalid token") from exc
@@ -148,17 +180,20 @@ class NLPModule:
         try:
             selected_expert = self._route_to_expert(prompt)
             logger.debug(
-                f"Routing to expert: {selected_expert} for prompt: {prompt}")
+                "Routing to expert: {} (prompt_length={})",
+                selected_expert,
+                len(prompt),
+            )
             inputs = self.tokenizer(prompt, return_tensors="pt").to(device)
             with torch.no_grad():
                 outputs = self.model.generate(
                     inputs["input_ids"], max_length=100)
             response = self.tokenizer.decode(
                 outputs[0], skip_special_tokens=True)
-            logger.info(f"Generated response by {selected_expert}: {response}")
+            logger.info("Generated response by {} (response_length={})", selected_expert, len(response))
             return NLPResponse(text=response, expert=selected_expert)
         except Exception as e:
-            logger.error(f"Error during text generation: {e}")
+            logger.error("Text generation failed (error_type={})", type(e).__name__)
             raise HTTPException(
                 status_code=500,
                 detail="Internal server error during text generation."
@@ -184,7 +219,7 @@ class CVModule:
             logger.info("Object detection completed successfully.")
             return detections
         except Exception as e:
-            logger.error(f"Error during object detection: {e}")
+            logger.error("Object detection failed (error_type={})", type(e).__name__)
             raise HTTPException(
                 status_code=500,
                 detail="Internal server error during object detection."
@@ -284,7 +319,7 @@ class SpeechProcessor:
             logger.info("Speech-to-text conversion completed successfully.")
             return text
         except Exception as e:
-            logger.error(f"Error during speech-to-text conversion: {e}")
+            logger.error("Speech-to-text failed (error_type={})", type(e).__name__)
             raise HTTPException(
                 status_code=500,
                 detail="Internal server error during speech-to-text conversion."
@@ -305,7 +340,7 @@ class SpeechProcessor:
                 self.tts.runAndWait()
             logger.info("Text-to-speech conversion completed successfully.")
         except Exception as e:
-            logger.error(f"Error during text-to-speech conversion: {e}")
+            logger.error("Text-to-speech failed (error_type={})", type(e).__name__)
             raise HTTPException(
                 status_code=500,
                 detail="Internal server error during text-to-speech conversion."
@@ -385,7 +420,7 @@ class EnhancedAGIPipeline:
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
